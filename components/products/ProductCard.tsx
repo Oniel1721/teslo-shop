@@ -1,4 +1,5 @@
-import { CardActionArea, CardMedia, Grid, Card, Box, Typography } from '@mui/material'
+import { CardActionArea, CardMedia, Grid, Card, Box, Typography, Link } from '@mui/material'
+import NextLink from 'next/link'
 import { useMemo, useState } from 'react'
 import { FC, IProduct } from '../../interfaces'
 
@@ -25,14 +26,18 @@ export const ProductCard:FC<Props> = ({ product }) => {
 
     >
       <Card>
-        <CardActionArea>
-          <CardMedia
-            component='img'
-            className='fadeIn'
-            image={productImage}
-            alt={product.title}
-          />
-        </CardActionArea>
+        <NextLink passHref href='/product/slug' prefetch={false}>
+          <Link>
+            <CardActionArea>
+              <CardMedia
+                component='img'
+                className='fadeIn'
+                image={productImage}
+                alt={product.title}
+              />
+            </CardActionArea>
+          </Link>
+        </NextLink>
       </Card>
 
       <Box sx={{ mt: 1 }} className='fadeIn' >
