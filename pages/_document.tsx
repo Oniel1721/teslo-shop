@@ -1,14 +1,14 @@
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
 
 class MyDocument extends Document {
-    static async getInitialProps(ctx: DocumentContext) {
-        const initalProps = await Document.getInitialProps(ctx)
+  static async getInitialProps (ctx: DocumentContext) {
+    const initalProps = await Document.getInitialProps(ctx)
 
-        return initalProps
-    }
+    return initalProps
+  }
 
-    render() {
-        return (
+  render () {
+    return (
             <Html>
                 <Head>
                 <link
@@ -21,8 +21,8 @@ class MyDocument extends Document {
                     <NextScript />
                 </body>
             </Html>
-        )
-    }
+    )
+  }
 }
 
 export default MyDocument

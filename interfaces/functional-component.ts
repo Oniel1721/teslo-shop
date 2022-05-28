@@ -1,7 +1,6 @@
-import { FC as FunctionalComponent, ReactElement } from 'react';
-import { ReactNode } from 'react';
+import { FC as FunctionalComponent, ReactElement, ReactNode } from 'react'
 
-type FunctionalComponentProps = { 
+type FunctionalComponentProps = {
     children?: ReactNode,
     key?: string | number
 }
