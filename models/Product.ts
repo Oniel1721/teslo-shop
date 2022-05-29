@@ -1,4 +1,5 @@
 import mongoose, { Schema, model, Model } from 'mongoose'
+import { SHOP_CONSTANTS } from '../database'
 import { IProduct } from '../interfaces'
 
 const productSchema = new Schema({
@@ -9,7 +10,7 @@ const productSchema = new Schema({
   sizes: [{
     type: String,
     enum: {
-      values: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+      values: SHOP_CONSTANTS.validSizes,
       message: '{VALUE} no es un tamaño válido'
     }
   }],
@@ -19,14 +20,14 @@ const productSchema = new Schema({
   type: {
     type: String,
     enum: {
-      values: ['shirts', 'pants', 'hoodies', 'hats'],
+      values: SHOP_CONSTANTS.validTypes,
       message: '{VALUE} no es un tipo válido'
     }
   },
   gender: {
     type: String,
     enum: {
-      values: ['men', 'women', 'kid', 'unisex'],
+      values: SHOP_CONSTANTS.validGenders,
       message: '{VALUE} no es un genero válido'
     }
   }
