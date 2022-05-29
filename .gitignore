@@ -5,12 +5,16 @@
 /.pnp
 .pnp.js
 
+
 # testing
+mongo
 /coverage
 
 # next.js
 /.next/
 /out/
+
+.env
 
 # production
 /build
