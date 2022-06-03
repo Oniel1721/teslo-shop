@@ -4,9 +4,12 @@ import NextLink from 'next/link'
 import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material'
 import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
+import { UIContext } from '../../context/ui'
 
 export const Navbar = () => {
+  const { toggleSideMenu } = useContext(UIContext)
+
   const { asPath } = useRouter()
 
   const currentCategoryPage = useMemo(() => {
@@ -16,8 +19,6 @@ export const Navbar = () => {
     if (!category) return ''
     return category.slice(1)
   }, [asPath])
-
-  console.log(currentCategoryPage)
 
   return (
     <AppBar>
@@ -68,7 +69,7 @@ export const Navbar = () => {
                 </Link>
             </NextLink>
 
-            <Button>
+            <Button onClick={() => toggleSideMenu()}>
                 Menú
             </Button>
         </Toolbar>
