@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next'
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { Box, Button, Grid, Typography } from '@mui/material'
 
 import { ShopLayout } from '../../components/layouts'
@@ -6,6 +6,27 @@ import { ProductSlideshow, SizeSelector } from '../../components/products'
 import { ItemCounter } from '../../components/ui'
 import { IProduct } from '../../interfaces'
 import { dbProduct } from '../../database'
+
+// Do not use this, server side rendering
+
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const { slug = '' } = ctx.query
+//   const product = await dbProduct.getProductBySlug(slug as string)
+//   if (!product) {
+//     return {
+//       redirect: {
+//         destination: '/',
+//         permanent: false
+//       }
+//     }
+//   }
+
+//   return {
+//     props: {
+//       product
+//     }
+//   }
+// }
 
 interface Props {
   product: IProduct
@@ -46,12 +67,21 @@ const ProductPage:NextPage<Props> = ({ product }) => {
   )
 }
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
+export const getStaticPaths: GetStaticPaths = async (ctx) => {
+  const slugs = await dbProduct.getAllProductsSlugs()
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { slug = '' } = ctx.query
-  const product = await dbProduct.getProductBySlug(slug as string)
+  return {
+    paths: slugs.map(({ slug }) => ({
+      params: { slug }
+    })),
+    fallback: 'blocking'
+  }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug = '' } = params as {slug: string}
+  const product = await dbProduct.getProductBySlug(slug)
+
   if (!product) {
     return {
       redirect: {
@@ -64,7 +94,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       product
-    }
+    },
+    revalidate: 86400
   }
 }
 
