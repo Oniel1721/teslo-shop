@@ -27,7 +27,7 @@ export const ProductCard:FC<Props> = ({ product }) => {
 
     >
       <Card>
-        <NextLink passHref href='/product/slug' prefetch={false}>
+        <NextLink passHref href={`/product/${product.slug}`} prefetch={false}>
           <Link>
             <CardActionArea>
               <CardMedia
