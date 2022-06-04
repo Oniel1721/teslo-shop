@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, Chip } from '@mui/material'
 
 import { ShopLayout } from '../../components/layouts'
 import { ProductSlideshow, SizeSelector } from '../../components/products'
@@ -51,11 +51,19 @@ const ProductPage:NextPage<Props> = ({ product }) => {
                     sizes={product.sizes}
                   />
                 </Box>
-                  <Button color='secondary' className='circular-btn'>
-                      Agregar al carrito
-                  </Button>
 
-                  {/* <Chip label="No hayk disponibles" color='error' variant='outlined' /> */}
+                  {
+                    (product.inStock > 0)
+                      ? (
+                          <Button color='secondary' className='circular-btn'>
+                              Agregar al carrito
+                          </Button>
+                        )
+                      : (
+                          <Chip label="No hay disponibles" color='error' variant='outlined' />
+                        )
+                  }
+
                 <Box sx={{ mt: 3 }}>
                   <Typography variant='subtitle2'>Descripción</Typography>
                   <Typography variant='body2'>{product.description}</Typography>
