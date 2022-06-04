@@ -6,7 +6,9 @@ import { ProductSlideshow, SizeSelector } from '../../components/products'
 import { ItemCounter } from '../../components/ui'
 import { ICartProduct, IProduct, ISize } from '../../interfaces'
 import { dbProduct } from '../../database'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
+import { useRouter } from 'next/router'
+import { CartContext } from '../../context/cart'
 
 // Do not use this, server side rendering
 
@@ -34,6 +36,10 @@ interface Props {
 }
 
 const ProductPage:NextPage<Props> = ({ product }) => {
+  const router = useRouter()
+
+  const { addProductToCart } = useContext(CartContext)
+
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
     images: product.images[0],
@@ -59,6 +65,13 @@ const ProductPage:NextPage<Props> = ({ product }) => {
     }))
   }, [])
 
+  const onAddProductToCart = () => {
+    if (!tempCartProduct.size) return undefined
+    addProductToCart(tempCartProduct)
+    // TODO: llamar la acción del context para agregar al carrito
+    router.push('/cart')
+  }
+
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -73,7 +86,7 @@ const ProductPage:NextPage<Props> = ({ product }) => {
                   <Typography variant='subtitle2'>Cantidad</Typography>
                   <ItemCounter
                     onQuatityChange={onQuantityChange}
-                    maxValue={product.inStock}
+                    maxValue={product.inStock > 10 ? 10 : product.inStock}
                     currentValue={tempCartProduct.quantity}
                   />
                   <SizeSelector
@@ -86,7 +99,7 @@ const ProductPage:NextPage<Props> = ({ product }) => {
                   {
                     (product.inStock > 0)
                       ? (
-                          <Button color='secondary' className='circular-btn'>
+                          <Button onClick={onAddProductToCart} color='secondary' className='circular-btn'>
                             {
                               tempCartProduct.size
                                 ? 'Agregar al carrito'
