@@ -4,13 +4,13 @@ import { CartState } from './'
 
 export enum ActionTypes {
     Cart_LoadCartFromCookiesOrStorage = 'Cart_LoadCartFromCookiesOrStorage',
-    Cart_AddProduct = 'Cart_AddProduct',
+    Cart_UpdateProductsInCart = 'Cart_UpdateProductsInCart',
 
 }
 
 type CartActionType = {
     type: ActionTypes,
-    payload: ICartProduct[] | ICartProduct
+    payload: ICartProduct[]
 }
 
 export const cartReducer = (state: CartState, action: CartActionType):CartState => {
@@ -19,11 +19,10 @@ export const cartReducer = (state: CartState, action: CartActionType):CartState 
       return {
         ...state
       }
-    case ActionTypes.Cart_AddProduct:
-      if (Array.isArray(action.payload)) return state
+    case ActionTypes.Cart_UpdateProductsInCart:
       return {
         ...state,
-        cart: [...state.cart, action.payload]
+        cart: [...action.payload]
       }
     default:
       return state
