@@ -7,28 +7,20 @@ export interface CartState {
     cart: ICartProduct[],
 }
 
+let cartFromCookie: ICartProduct[] = []
+
+try {
+  cartFromCookie = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
+} catch (err) {
+  console.error('Error getting cart from cookie')
+}
+
 const CART_INITIAL_STATE: CartState = {
-  cart: []
+  cart: cartFromCookie
 }
 
 export const CartProvider:FC = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE)
-
-  useEffect(() => {
-    const cartCookieValue = Cookie.get('cart') ?? '[]'
-    try {
-      const productsFromCookie = JSON.parse(cartCookieValue) as ICartProduct[]
-      dispatch({
-        type: ActionTypes.Cart_LoadCartFromCookiesOrStorage,
-        payload: productsFromCookie
-      })
-    } catch (error) {
-      dispatch({
-        type: ActionTypes.Cart_LoadCartFromCookiesOrStorage,
-        payload: []
-      })
-    }
-  }, [])
 
   useEffect(() => {
     Cookie.set('cart', JSON.stringify(state.cart))
