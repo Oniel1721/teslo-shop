@@ -3,6 +3,10 @@ import { ICartProduct } from '../../interfaces'
 
 interface ContextProps {
     cart: ICartProduct[];
+    numberOfItems: number;
+    subTotal: number;
+    tax: number;
+    total: number;
     addProductToCart: (product: ICartProduct)=>void
     updatedCartQuatity: (product: ICartProduct)=>void
     removeCartProduct: (product: ICartProduct)=>void
