@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { FC, ICartProduct } from '../../interfaces'
 import { CartContext, cartReducer, ActionTypes } from './'
 import Cookie from 'js-cookie'
@@ -7,24 +7,35 @@ export interface CartState {
     cart: ICartProduct[],
 }
 
-let cartFromCookie: ICartProduct[] = []
-
-try {
-  cartFromCookie = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
-} catch (err) {
-  console.error('Error getting cart from cookie')
-}
-
 const CART_INITIAL_STATE: CartState = {
-  cart: cartFromCookie
+  cart: []
 }
 
 export const CartProvider:FC = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE)
+  const [cookieLoaded, setCookieLoaded] = useState(false)
 
   useEffect(() => {
-    Cookie.set('cart', JSON.stringify(state.cart))
-  }, [state.cart])
+    try {
+      const productsFromCookie: ICartProduct[] = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
+      dispatch({
+        type: ActionTypes.Cart_LoadCartFromCookiesOrStorage,
+        payload: productsFromCookie
+      })
+    } catch (error) {
+      dispatch({
+        type: ActionTypes.Cart_LoadCartFromCookiesOrStorage,
+        payload: []
+      })
+    }
+    setCookieLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (cookieLoaded) {
+      Cookie.set('cart', JSON.stringify(state.cart))
+    }
+  }, [state.cart, cookieLoaded])
 
   const addProductToCart = (product: ICartProduct) => {
     const existProductInCartWithSameSize = state.cart.some((p) => p._id === product._id && p.size === product.size)
