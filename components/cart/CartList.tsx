@@ -1,7 +1,7 @@
 import NextLink from 'next/link'
 import { Box, Button, CardActionArea, CardMedia, Grid, Link, Typography } from '@mui/material'
 import { ItemCounter } from '../ui'
-import { FC } from '../../interfaces'
+import { FC, ICartProduct } from '../../interfaces'
 import { useContext } from 'react'
 import { CartContext } from '../../context/cart'
 
@@ -10,7 +10,12 @@ interface Props {
 }
 
 export const CartList:FC<Props> = ({ editable = false }) => {
-  const { cart } = useContext(CartContext)
+  const { cart, updatedCartQuatity } = useContext(CartContext)
+
+  const onNewCartQuatityValue = (product: ICartProduct, newQuatityValue: number) => {
+    product.quantity = newQuatityValue
+    updatedCartQuatity(product)
+  }
 
   return (
     <>
@@ -18,7 +23,7 @@ export const CartList:FC<Props> = ({ editable = false }) => {
             cart.length === 0
               ? (<Typography variant='body1'>No hay productos en el carrito</Typography>)
               : cart.map(product => (
-                <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
+                <Grid container spacing={2} key={product.slug + product.size} sx={{ mb: 1 }}>
                     <Grid item xs={3}>
                         <NextLink href={`/product/${product.slug}`} passHref>
                             <Link>
@@ -40,7 +45,7 @@ export const CartList:FC<Props> = ({ editable = false }) => {
                                 editable
                                   ? <ItemCounter
                                         currentValue={product.quantity}
-                                        onQuatityChange={() => {}}
+                                        onQuatityChange={(quantity) => { onNewCartQuatityValue(product, quantity) }}
                                         maxValue={10}/>
                                   : <Typography variant='h5'>{product.quantity} {product.quantity > 1 ? 'productos' : 'producto'}</Typography>
                             }
