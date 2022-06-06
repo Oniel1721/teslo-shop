@@ -76,5 +76,4 @@ export default function handler (req: NextApiRequest, res: NextApiResponse<Data>
         message: 'Bad request'
       })
   }
-  res.status(200).json({ message: 'Example' })
 }

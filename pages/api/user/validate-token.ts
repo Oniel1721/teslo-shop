@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { db } from '../../../database'
 import { User } from '../../../models'
-import bcrypt from 'bcryptjs'
 import { jwt } from '../../../utils'
 
 type Data =
@@ -15,39 +14,41 @@ type Data =
         }
     }
 
-const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { email = '', password = '' } = req.body
+const validateToken = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  const { token = '' } = req.cookies as {token: string}
+  let userId = ''
 
+  try {
+    userId = await jwt.isValidToken(token)
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Token de autorización no es válido'
+    })
+  }
   await db.connect()
-
-  const user = await User.findOne({ email })
-
+  const user = await User.findById(userId).lean()
   await db.disconnect()
 
   if (!user) {
-    return res.status(400).json({ message: 'Correo o contraseña no válidos' })
+    return res.status(400).json({
+      message: 'No existe usuario con ese id'
+    })
   }
 
-  if (!bcrypt.compareSync(password, user.password!)) {
-    return res.status(400).json({ message: 'Correo o contraseña no válidos' })
-  }
-
-  const { role, name, _id } = user
-
-  const token = jwt.signToken(_id, email)
+  const { _id, email, role, name } = user
 
   return res.status(200).json({
-    token,
+    token: jwt.signToken(_id, email),
     user: {
-      role, name, email
+      email, role, name
     }
   })
 }
 
 export default function handler (req: NextApiRequest, res: NextApiResponse<Data>) {
   switch (req.method) {
-    case 'POST':
-      return loginUser(req, res)
+    case 'GET':
+      return validateToken(req, res)
     default:
       res.status(400).json({
         message: 'Bad request'
