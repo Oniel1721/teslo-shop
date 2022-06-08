@@ -19,6 +19,7 @@ export const AuthProvider:FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
 
   const checkToken = async () => {
+    if (!Cookies.get('token')) return undefined
     try {
       const { data } = await tesloApi.get('/user/validate-token')
       const { token, user } = data
