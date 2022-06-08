@@ -31,8 +31,8 @@ const RegisterPage = () => {
       setTimeout(() => { setShowError(false); setErrorMessage('') }, 3000)
       return
     }
-
-    router.replace('/')
+    const destination = router.query.p?.toString() || '/'
+    router.replace(destination)
     // Todo: navegar a la pantalla que el usuario estaba
   }
   return (
@@ -104,7 +104,7 @@ const RegisterPage = () => {
                     </Grid>
 
                     <Grid item xs={12} display='flex' justifyContent='end'>
-                        <NextLink href='/auth/login' passHref>
+                        <NextLink href={`/auth/login?p=${router.query.p?.toString() || '/'}`} passHref>
                             <Link underline='always'>
                                 ¿Ya tienes una cuenta?
                             </Link>
