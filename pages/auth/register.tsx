@@ -1,11 +1,12 @@
 import NextLink from 'next/link'
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material'
 import { AuthLayout } from '../../components/layouts'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { tesloApi } from '../../api'
 import { ErrorOutline } from '@mui/icons-material'
 import { validator } from '../../utils'
+import { AuthContext } from '../../context/auth'
+import { useRouter } from 'next/router'
 
 type FormData = {
     name: string;
@@ -14,21 +15,24 @@ type FormData = {
 }
 
 const RegisterPage = () => {
+  const router = useRouter()
   const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const { registerUser } = useContext(AuthContext)
 
   const onRegisterForm = async ({ email, password, name }: FormData) => {
     setShowError(false)
-    try {
-      const { data } = await tesloApi.post('/user/register', { email, password, name })
-      const { token, user } = data
-      console.log({ token, user })
-    } catch (error) {
-      console.log('Error en las credenciales')
+    const { hasError, message = '' } = await registerUser(name, email, password)
+    if (hasError) {
       setShowError(true)
-      setTimeout(() => setShowError(false), 3000)
+      setErrorMessage(message)
+      setTimeout(() => { setShowError(false); setErrorMessage('') }, 3000)
+      return
     }
 
+    router.replace('/')
     // Todo: navegar a la pantalla que el usuario estaba
   }
   return (
@@ -39,7 +43,7 @@ const RegisterPage = () => {
                     <Grid item xs={12}>
                         <Typography variant='h1' component='h1'>Crear Cuenta</Typography>
                         <Chip
-                          label='Ese correo ya esta siendo utilizado'
+                          label={errorMessage}
                           color='error'
                           icon={<ErrorOutline/>}
                           className='fadeIn'
