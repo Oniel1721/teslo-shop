@@ -15,16 +15,13 @@ type ActionTypes =
     total: number;
   } }
 
-const isArray = (item: any):boolean => {
-  return Array.isArray(item)
-}
-
 export const cartReducer = (state: CartState, action: ActionTypes):CartState => {
   switch (action.type) {
     case 'Cart_LoadCartFromCookiesOrStorage':
       return {
         ...state,
-        cart: [...action.payload]
+        cart: [...action.payload],
+        isLoaded: true
       }
     case 'Cart_UpdateProductsInCart':
       return {

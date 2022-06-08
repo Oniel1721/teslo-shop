@@ -9,6 +9,7 @@ export interface CartState {
     subTotal: number;
     tax: number;
     total: number;
+    isLoaded: boolean;
 }
 
 const CART_INITIAL_STATE: CartState = {
@@ -16,7 +17,8 @@ const CART_INITIAL_STATE: CartState = {
   numberOfItems: 0,
   subTotal: 0,
   tax: 0,
-  total: 0
+  total: 0,
+  isLoaded: false
 }
 
 export const CartProvider:FC = ({ children }) => {
