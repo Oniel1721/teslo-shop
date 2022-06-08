@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { useReducer } from 'react'
+import { useEffect, useReducer } from 'react'
 import { tesloApi } from '../../api'
 import { FC, IUser } from '../../interfaces'
 import { AuthContext, authReducer } from './'
@@ -17,6 +17,21 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 export const AuthProvider:FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
+
+  const checkToken = async () => {
+    try {
+      const { data } = await tesloApi.get('/user/validate-token')
+      const { token, user } = data
+      Cookies.set('token', token)
+      dispatch({ type: 'Auth_Login', payload: user })
+    } catch (error) {
+      Cookies.remove('token')
+    }
+  }
+
+  useEffect(() => {
+    checkToken()
+  }, [])
 
   const loginUser = async (email: string, password: string): Promise<boolean> => {
     try {
